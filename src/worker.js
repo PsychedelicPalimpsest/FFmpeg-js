@@ -20,6 +20,7 @@ function postError(data, error_msg){
 var ffmpeg = null;
 self.onmessage = function(e) {
    let data = JSON.parse(e.data);
+   console.log(data);
 
    let cmd = commands[data.cmd];
    if (data.args.length != cmd.args)

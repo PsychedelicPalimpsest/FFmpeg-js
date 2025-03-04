@@ -4,6 +4,11 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Foo</title>
+	<style type="text/css">
+		.invisible{
+			display: none;
+		}
+	</style>
 </head>
 <body>
 
@@ -16,17 +21,46 @@
   	}
   }
 </script>
-<<!-- script type="module" src="ffmpeg-core.js"></script>
-<script type="module">
-	import ffmpeg from "./ffmpeg-core.js";
-	console.log(await ffmpeg());
-</script> -->
+
+<button id="trans" onclick="transcode()" class="invisible">Transcode</button>
+<p id="progress" class="invisible">Loading</p>
+<br>
+<video src controls class="invisible"></video>
+
+
 <script type="text/javascript" src="local.js"></script>
 <script type="text/javascript">
 	(async function(){
 		window.ffmpeg = await createFFmpeg();
-		console.log(await ffmpeg.listDir("."));
+		ffmpeg.setProgress((progress)=>{
+			document.querySelector("p#progress").textContent = `Transcoding ${progress.progress * 100}%`;
+			
+		})
+		document.querySelector("button#trans").classList.remove("invisible");
 	})();
+
+	async function transcode(){
+		if (!window.ffmpeg) {return alert("FFmpeg not yet loaded!");}
+		document.querySelector("video").classList.add("invisible");
+		document.querySelector("button#trans").classList.add("invisible");
+
+		document.querySelector("p#progress").textContent = "Downloading";
+		document.querySelector("p#progress").classList.remove("invisible");
+
+		await ffmpeg.writefileFromUrl(
+			"buck.webm", 
+			"https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm"
+		);
+
+	 await ffmpeg.exec(['-i', 'buck.webm', 'output.mp4']);
+
+	 document.querySelector("p#progress").classList.add("invisible");
+	 document.querySelector("video").classList.remove("invisible");
+	 document.querySelector("video").src = await ffmpeg.readFileToUrl("output.mp4")
+
+
+		document.querySelector("button#trans").classList.remove("invisible");
+	}
 	
 	
 </script>

@@ -46,7 +46,26 @@ const commands = {
 		needsLoaded : false,
 		func: async function(callback){
 			ffmpeg = await createFFmpegCore();
+			ffmpeg.setProgress((progress)=>{
+				postMessage(JSON.stringify({
+			      state: "progress",
+			      data: progress
+			   }));
+			});
+			ffmpeg.setLogger((log)=>{
+				postMessage(JSON.stringify({
+			      state: "log",
+			      data: log
+			   }));
+			});
 			callback(true);
+		}
+	},
+	exec:{
+		args: 1,
+		needsLoaded : true,
+		func: function(callback, args){
+			callback(ffmpeg.exec(...args));
 		}
 	}
 };

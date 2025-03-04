@@ -10,6 +10,9 @@
 	function FFmpeg(){
 		let callbacks = {};
 
+		let logger = null;
+		let progress = null;
+
 		let blob = URL.createObjectURL(new Blob([atob(worker64)], {type: "application/javascript"}));
 		let worker = new Worker(blob);
 		this.worker = worker;
@@ -18,8 +21,12 @@
 			let data = JSON.parse(e.data);
 			if (data["state"] == "error"){
 				callbacks[data.uuid][1](new Error(data.error_msg));
-			}else{
+			}else if (data["state"] == "success"){
 				callbacks[data.uuid][0](data.data);
+			}else if (data["state"] == "progress"){
+				if (progress) progress(data.data);
+			}else if (data["state"] == "log"){
+				if (logger) logger(data.data);
 			}
 
 		}
@@ -58,6 +65,12 @@
 			}
 			URL.revokeObjectURL(url);
 			return ret;
+		}
+		this["setLogger"] = function(func){
+			logger = func;
+		}
+		this["setProgress"] = function(func){
+			progress = func;
 		}
 	}
 
