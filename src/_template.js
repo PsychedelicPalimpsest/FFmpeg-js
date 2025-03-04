@@ -17,9 +17,9 @@
 		worker.onmessage = function(e){
 			let data = JSON.parse(e.data);
 			if (data["state"] == "error"){
-				callbacks[data.uuid](data);
+				callbacks[data.uuid][1](new Error(data.error_msg));
 			}else{
-				callbacks[data.uuid](data.data);
+				callbacks[data.uuid][0](data.data);
 			}
 
 		}
@@ -28,8 +28,8 @@
 		for (let func of Object.keys(commands)){
 			let cmd = commands[func];
 			this[func] = function(...args){
-				return new Promise((callback)=>{
-					let id = ""+crypto.randomUUID();
+				return new Promise((...callback)=>{
+					let id = ""+(Math.random() * 2**64);
 					callbacks[id] = callback;
 
 					worker.postMessage(JSON.stringify({
@@ -46,6 +46,18 @@
 			let r = await this.writefileFromUrl(path, url);
 			URL.revokeObjectURL(url);
 			return r;
+		};
+		this["readFile"] = async function(path, isString){
+			let url = await this.readFileToUrl(path);
+			let req = await fetch(url);
+			let ret = await req.bytes();
+
+			if (isString){
+				let d = new TextDecoder()
+				ret = d.decode(ret);
+			}
+			URL.revokeObjectURL(url);
+			return ret;
 		}
 	}
 

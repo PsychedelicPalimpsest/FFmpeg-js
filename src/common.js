@@ -7,6 +7,22 @@ const commands = {
 			callback(ffmpeg.FS.readdir(path));
 		}
 	},
+	mkdir: {
+		args: 1,
+		needsLoaded: true,
+		func: function(callback, path){
+			ffmpeg.FS.mkdir(path);
+			callback(path);
+		}
+	},
+	readFileToUrl: {
+		args: 1,
+		needsLoaded: true,
+		func: function(callback, path){
+			let bin = ffmpeg.FS.readFile(path, {encoding: "binary"});
+			callback(URL.createObjectURL(new Blob([bin])));
+		}
+	},
 	rename: {
 		args: 2,
 		needsLoaded : true,

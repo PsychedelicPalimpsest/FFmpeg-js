@@ -28,12 +28,16 @@ self.onmessage = function(e) {
       return postError(data, `Internel error: ${data.cmd} needs ffmpeg core to be loaded!`);
    
    
-   cmd.func((ret)=> postMessage(JSON.stringify({
-            uuid: data.uuid,
-            state: "success",
-            data: ret
-      })), 
-   ...data.args);
+   try{
+      cmd.func((ret)=> postMessage(JSON.stringify({
+               uuid: data.uuid,
+               state: "success",
+               data: ret
+         })), 
+      ...data.args);
+   } catch(e){
+      postError(data, e.message)
+   }
 };
 
 
