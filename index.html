@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Foo</title>
+</head>
+<body>
+
+
+
+<script type="importmap">
+  {
+    "imports": {
+      "ffmpeg": "./ffmpeg-core.js"
+  	}
+  }
+</script>
+<<!-- script type="module" src="ffmpeg-core.js"></script>
+<script type="module">
+	import ffmpeg from "./ffmpeg-core.js";
+	console.log(await ffmpeg());
+</script> -->
+<script type="text/javascript" src="local.js"></script>
+<script type="text/javascript">
+	(async function(){
+		window.ffmpeg = await createFFmpeg();
+		console.log(await ffmpeg.listDir("."));
+	})();
+	
+	
+</script>
+
+
+</body>
+</html>

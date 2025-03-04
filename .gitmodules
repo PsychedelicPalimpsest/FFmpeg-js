@@ -1,0 +1,3 @@
+[submodule "ffmpeg.wasm"]
+	path = ffmpeg.wasm
+	url = https://github.com/ffmpegwasm/ffmpeg.wasm.git
