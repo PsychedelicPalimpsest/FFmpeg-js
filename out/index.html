@@ -18,10 +18,10 @@
 <button id="trans" onclick="transcode()" class="invisible">Transcode</button>
 <p id="progress" class="invisible">Loading</p>
 <br>
-<video src controls class="invisible"></video>
+<video controls class="invisible" src></video>
 
 
-<script type="text/javascript" src="0.12.5.bundle.js"></script>
+<script type="text/javascript" src="https://github.com/HeronErin/FFmpeg-js/releases/download/2/latest.bundle.js"></script>
 <script type="text/javascript">
 	(async function(){
 		window.ffmpeg = await createFFmpeg();
