@@ -43,7 +43,7 @@
 		document.querySelector("p#progress").textContent = "Downloading";
 		document.querySelector("p#progress").classList.remove("invisible");
 
-		await ffmpeg.writefileFromUrl(
+		await ffmpeg.writeFileFromUrl(
 			"buck.webm", 
 			"https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm"
 		);

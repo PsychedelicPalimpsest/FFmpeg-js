@@ -31,7 +31,7 @@ const commands = {
             callback(newname);
         }
     },
-    writefileFromUrl: {
+    writeFileFromUrl: {
         args: 2,
         needsLoaded : true,
         func: async function(callback, path, url){

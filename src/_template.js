@@ -50,7 +50,7 @@
         this["writeFile"] = async function(path, data){
             let blob = new Blob([data]);
             let url = URL.createObjectURL(blob);
-            let r = await this.writefileFromUrl(path, url);
+            let r = await this.writeFileFromUrl(path, url);
             URL.revokeObjectURL(url);
             return r;
         };
