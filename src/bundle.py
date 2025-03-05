@@ -120,8 +120,8 @@ def main():
 
 	except Exception as e:
 		print(f"Error: Unable to generate bundle from local: {e}")
-	# with ProcessPoolExecutor(max_workers=8) as e:
-	# 	for v in requests.get("https://api.cdnjs.com/libraries/ffmpeg?fields=versions").json()["versions"]:
+	 with ProcessPoolExecutor(max_workers=8) as e:
+	 	for v in requests.get("https://api.cdnjs.com/libraries/ffmpeg?fields=versions").json()["versions"]:
 	 		# This wont work with older versions
 	 		if v.split(".")[1] != "12":
 	 			continue
