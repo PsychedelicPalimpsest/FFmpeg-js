@@ -122,10 +122,10 @@ def main():
 		print(f"Error: Unable to generate bundle from local: {e}")
 	# with ProcessPoolExecutor(max_workers=8) as e:
 	# 	for v in requests.get("https://api.cdnjs.com/libraries/ffmpeg?fields=versions").json()["versions"]:
-	# 		# This wont work with older versions
-	# 		if v.split(".")[1] != "12":
-	# 			continue
-	# 		e.submit(onlineGen, v)
+	 		# This wont work with older versions
+	 		if v.split(".")[1] != "12":
+	 			continue
+	 		e.submit(onlineGen, v)
 
 if __name__ == "__main__":
 	main()
