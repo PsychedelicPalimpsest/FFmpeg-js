@@ -1,0 +1,66 @@
+name: Generate Bundles
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    # Run every week to keep current
+    - cron: '0 14 * * 1'
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.sha }}
+          draft: false
+          prerelease: false
+
+
+      - name: Update pkg-config database
+        run: sudo ldconfig
+      # - name: Use Node.js 18
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: 18.x
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      # - name: Install Node dependencies
+      #   run: cd ffmpeg.wasm ; npm install --force
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # - name: Build ffmpegs js
+      #   run: cd ffmpeg.wasm ; npm run build
+
+      - name: Build ffmpeg-core
+        run: cd ffmpeg.wasm ; make prd
+
+
+      - name: Create bundles
+        run: python src/bundle.py
+
+      - name: Upload Each JS File to Release
+        run: |
+          for file in out/*.js; do
+            curl -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/javascript" \
+              --data-binary @"$file" \
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename $file)"
+          done

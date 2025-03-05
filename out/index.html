@@ -14,13 +14,6 @@
 
 
 
-<script type="importmap">
-  {
-    "imports": {
-      "ffmpeg": "./ffmpeg-core.js"
-  	}
-  }
-</script>
 
 <button id="trans" onclick="transcode()" class="invisible">Transcode</button>
 <p id="progress" class="invisible">Loading</p>
@@ -28,7 +21,7 @@
 <video src controls class="invisible"></video>
 
 
-<script type="text/javascript" src="local.js"></script>
+<script type="text/javascript" src="0.12.5.bundle.js"></script>
 <script type="text/javascript">
 	(async function(){
 		window.ffmpeg = await createFFmpeg();
@@ -39,8 +32,11 @@
 		document.querySelector("button#trans").classList.remove("invisible");
 	})();
 
+	let last_blob = null;
 	async function transcode(){
 		if (!window.ffmpeg) {return alert("FFmpeg not yet loaded!");}
+		if (last_blob) URL.revokeObjectURL(last_blob);
+
 		document.querySelector("video").classList.add("invisible");
 		document.querySelector("button#trans").classList.add("invisible");
 
@@ -56,7 +52,7 @@
 
 	 document.querySelector("p#progress").classList.add("invisible");
 	 document.querySelector("video").classList.remove("invisible");
-	 document.querySelector("video").src = await ffmpeg.readFileToUrl("output.mp4")
+	 document.querySelector("video").src = last_blob = await ffmpeg.readFileToUrl("output.mp4")
 
 
 		document.querySelector("button#trans").classList.remove("invisible");
