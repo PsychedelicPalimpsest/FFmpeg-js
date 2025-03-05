@@ -18,6 +18,16 @@ FFMPEG_CORE_JS = os.path.join(
 	FFMPEG_DIR,
 	"packages", "core", "dist", "esm", "ffmpeg-core.js"
 )
+
+FFMPEG_CORE_WASM_MT = os.path.join(
+	FFMPEG_DIR,
+	"packages", "core-mt", "dist", "esm", "ffmpeg-core.wasm"
+)
+FFMPEG_CORE_JS_MT = os.path.join(
+	FFMPEG_DIR,
+	"packages", "core-mt", "dist", "esm", "ffmpeg-core.js"
+)
+
 TEMPLATE = os.path.join(
 	SRC_DIR, "_template.js"
 )
@@ -65,18 +75,19 @@ def createBundle(corejsB64, corewasmB64, outName):
 	f.write(js)
 	f.close()
 
-def generateFromLocal():
-	f = open(FFMPEG_CORE_WASM, "rb")
+# Note: MT is not working as of now
+def generateFromLocal(doMt = False):
+	f = open(FFMPEG_CORE_WASM if not doMt else FFMPEG_CORE_WASM_MT, "rb")
 	wasm = f.read()
 	f.close()
-	f = open(FFMPEG_CORE_JS, "rb")
+	f = open(FFMPEG_CORE_JS if not doMt else FFMPEG_CORE_JS_MT, "rb")
 	js = f.read()
 	f.close()
 
 	createBundle(
 		base64.b64encode(js).decode("ascii"),
 		base64.b64encode(wasm).decode("ascii"),
-		os.path.join(os.path.dirname(SRC_DIR), "out", "latest.bundle.js")
+		os.path.join(os.path.dirname(SRC_DIR), "out", "latest." + ("mt." if doMt else "") + "bundle.js")
 	)
 def generateFromVersion(version):
 	js = requests.get(f"https://unpkg.com/@ffmpeg/core@{version}/dist/esm/ffmpeg-core.js")
@@ -106,14 +117,15 @@ def main():
 	try:
 		generateFromLocal()
 		print("Local bundle generated!")
+
 	except Exception as e:
 		print(f"Error: Unable to generate bundle from local: {e}")
-	with ProcessPoolExecutor(max_workers=8) as e:
-		for v in requests.get("https://api.cdnjs.com/libraries/ffmpeg?fields=versions").json()["versions"]:
-			# This wont work with older versions
-			if v.split(".")[1] != "12":
-				continue
-			e.submit(onlineGen, v)
+	# with ProcessPoolExecutor(max_workers=8) as e:
+	# 	for v in requests.get("https://api.cdnjs.com/libraries/ffmpeg?fields=versions").json()["versions"]:
+	# 		# This wont work with older versions
+	# 		if v.split(".")[1] != "12":
+	# 			continue
+	# 		e.submit(onlineGen, v)
 
 if __name__ == "__main__":
 	main()
