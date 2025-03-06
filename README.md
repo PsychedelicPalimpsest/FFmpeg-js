@@ -4,7 +4,7 @@
 A better ffmpeg.wasm front end, allowing for it to be included in a single line of js, and is independent of the ffmpeg-core version.
 
 
-See the demo page [here](https://heronerin.github.io/FFmpeg-js/out/)
+See the demo page [here](https://PsychedelicPalimpsest.github.io/FFmpeg-js/out/)
 
 
 
